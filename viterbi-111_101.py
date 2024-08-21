@@ -49,6 +49,8 @@ def viterbi_trellis(input_seq: list, generator_poly: list, store_hamming: list, 
     # 2,3 = B
     # 4,5 = C
     # 6,7 = D
+
+    # Used to make easier navigate
     a = 0
     b = 1
     c = 2
@@ -77,23 +79,19 @@ def viterbi_trellis(input_seq: list, generator_poly: list, store_hamming: list, 
                                                 hammingDistance(generator_poly[c][1], input_seq[elements], hamming_path[c][elements-1]))
 
         #Path to c from b and d
-        hamming_path[c][elements] = lowestHamming(hammingDistance(generator_poly[b][0], input_seq[elements], hamming_path[a][elements-1]),
+        hamming_path[c][elements] = lowestHamming(hammingDistance(generator_poly[b][0], input_seq[elements], hamming_path[b][elements-1]),
                                                 hammingDistance(generator_poly[d][0], input_seq[elements], hamming_path[d][elements-1]))
 
         #Path to d from b and d
-        hamming_path[d][elements] = lowestHamming(hammingDistance(generator_poly[b][1], input_seq[elements], hamming_path[a][elements-1]),
+        hamming_path[d][elements] = lowestHamming(hammingDistance(generator_poly[b][1], input_seq[elements], hamming_path[b][elements-1]),
                                                 hammingDistance(generator_poly[d][1], input_seq[elements], hamming_path[d][elements-1]))
 
         #print(input_seq[elements])
-        store_hamming[0][elements] = hammingDistance(generator_poly[0][0], input_seq[elements], store_hamming[0][elements-1])   #a->a
+        #store_hamming[0][elements] = hammingDistance(generator_poly[0][0], input_seq[elements], store_hamming[0][elements-1])   #a->a
         #store_hamming[1][elements] = hammingDistance(generator_poly[2][0], input_seq[elements], store_hamming[][elements-1])
-        store_hamming[2][elements] = hammingDistance(generator_poly[0][1], input_seq[elements], store_hamming[0][elements-1])   #a->b
-    store_hamming[6][1]
+        #store_hamming[2][elements] = hammingDistance(generator_poly[0][1], input_seq[elements], store_hamming[0][elements-1])   #a->b
 
-    #print(store_hamming)
-    print(hamming_path)
-    #print(store_hamming)
-    return
+    return hamming_path
 
 
 
@@ -113,7 +111,8 @@ if __name__ == "__main__":
 
 
     # Sequence to be decoded. Entered as a list of strings
-    input_sequence = ["11", "01", "01", "10", "01"]
+    #input_sequence = ["11", "01", "01", "10", "01"]
+    input_sequence = ["01", "00", "01", "00", "00"]
 
 
     # Get length of sequence
@@ -124,6 +123,7 @@ if __name__ == "__main__":
 
     # DEMO row, column
     #ready_hamming[5][3] = 5
-    
 
-    viterbi_trellis(input_sequence, generator111_101, ready_hamming, reduced_hamming)
+
+    hammign_matrix = viterbi_trellis(input_sequence, generator111_101, ready_hamming, reduced_hamming)
+    print(hammign_matrix)
