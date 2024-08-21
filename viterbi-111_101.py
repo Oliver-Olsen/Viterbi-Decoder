@@ -34,9 +34,9 @@ def hammingDistance(generator_states: str, seq: str, previousDist: int) -> int:
 
 def lowestHamming(ham1: int, ham2: int) -> int:
     # Hard decision. chooses the upper path at a tie.
-    print(ham1, "ham1")
-    print(ham2, "ham2")
-    if ham1 < ham2:
+    #print(ham1, "ham1")
+    #print(ham2, "ham2")
+    if ham1 > ham2:
         return ham2
     else:
         return ham1
@@ -49,22 +49,40 @@ def viterbi_trellis(input_seq: list, generator_poly: list, store_hamming: list, 
     # 2,3 = B
     # 4,5 = C
     # 6,7 = D
+    a = 0
+    b = 1
+    c = 2
+    d = 3
 
     # First step
-    hamming_path[0][0] = hammingDistance(generator_poly[0][0], input_seq[0], 0)                    # a0 -> a1
+    hamming_path[a][0] = hammingDistance(generator_poly[a][0], input_seq[0], 0)                    # a0 -> a1
 
-    hamming_path[1][0] = hammingDistance(generator_poly[0][1], input_seq[0], 0)                    # a0 -> b1
+    hamming_path[b][0] = hammingDistance(generator_poly[a][1], input_seq[0], 0)                    # a0 -> b1
 
     # Second step
-    hamming_path[0][1] = hammingDistance(generator_poly[0][0], input_seq[1], hamming_path[0][0])  # a1 -> a2
-    hamming_path[1][1] = hammingDistance(generator_poly[0][1], input_seq[1], hamming_path[0][0])  # a1 -> b2
-    hamming_path[2][1] = hammingDistance(generator_poly[1][0], input_seq[1], hamming_path[1][0])  # b1 -> c2
-    hamming_path[3][1] = hammingDistance(generator_poly[1][1], input_seq[1], hamming_path[1][0])  # b1 -> d2
+    hamming_path[a][1] = hammingDistance(generator_poly[a][0], input_seq[1], hamming_path[a][0])  # a1 -> a2
+    hamming_path[b][1] = hammingDistance(generator_poly[a][1], input_seq[1], hamming_path[a][0])  # a1 -> b2
+    hamming_path[c][1] = hammingDistance(generator_poly[b][0], input_seq[1], hamming_path[b][0])  # b1 -> c2
+    hamming_path[d][1] = hammingDistance(generator_poly[b][1], input_seq[1], hamming_path[b][0])  # b1 -> d2
 
     # loops for the remainder of columns/sequences left. The first two unique steps have been completed.
     for elements in range(2, len(input_seq)):
 
-        hamming_path[0][elements] = lowestHamming(hammingDistance(generator_poly[0][0], input_seq[elements], hamming_path[0][elements-1]), hammingDistance(generator_poly[2][0], input_seq[elements], hamming_path[2][0]))
+        #Path to a from a and c. Lowest hamming distance is saved
+        hamming_path[a][elements] = lowestHamming(hammingDistance(generator_poly[a][0], input_seq[elements], hamming_path[a][elements-1]),
+                                                hammingDistance(generator_poly[c][0], input_seq[elements], hamming_path[c][elements-1]))
+
+        #Path to b from a and c
+        hamming_path[b][elements] = lowestHamming(hammingDistance(generator_poly[a][1], input_seq[elements], hamming_path[a][elements-1]),
+                                                hammingDistance(generator_poly[c][1], input_seq[elements], hamming_path[c][elements-1]))
+
+        #Path to c from b and d
+        hamming_path[c][elements] = lowestHamming(hammingDistance(generator_poly[b][0], input_seq[elements], hamming_path[a][elements-1]),
+                                                hammingDistance(generator_poly[d][0], input_seq[elements], hamming_path[d][elements-1]))
+
+        #Path to d from b and d
+        hamming_path[d][elements] = lowestHamming(hammingDistance(generator_poly[b][1], input_seq[elements], hamming_path[a][elements-1]),
+                                                hammingDistance(generator_poly[d][1], input_seq[elements], hamming_path[d][elements-1]))
 
         #print(input_seq[elements])
         store_hamming[0][elements] = hammingDistance(generator_poly[0][0], input_seq[elements], store_hamming[0][elements-1])   #a->a
@@ -74,7 +92,7 @@ def viterbi_trellis(input_seq: list, generator_poly: list, store_hamming: list, 
 
     #print(store_hamming)
     print(hamming_path)
-    print(store_hamming)
+    #print(store_hamming)
     return
 
 
