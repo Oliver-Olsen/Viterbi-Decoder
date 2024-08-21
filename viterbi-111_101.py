@@ -101,7 +101,7 @@ def corrected_sequence(hamming_tree: list, recieved_seq: list) -> list:
     #Stores the final row path, from right to left
     path = []
 
-    #Used to store the cheapest path
+    #Used to store the cheapest path. Set to infinite so the first compare is automatically the smallest
     smallest = float('inf')
 
     # Minus 1 to be used as an index
@@ -127,35 +127,44 @@ def corrected_sequence(hamming_tree: list, recieved_seq: list) -> list:
         3: [1, 3]
         }
 
+    #Goes through the tree for each column, but stops at the first column
     for columns in range(lastCol, 1, -1):
         previousPos = rules_move[currentRow]
         smallest = float('inf')
         smallestPrevState = None
 
+        #Uses the dictionary above to navigate through only paths allowed
         for prev_position in previousPos:
             if hamming_tree[prev_position][columns - 1] < smallest:
                 smallest = hamming_tree[prev_position][columns - 1]
                 smallestPrevState = prev_position
 
+        #Cheapest hamming distance row to choose. Saves the current state in the path, but also for the next loop
         currentRow = smallestPrevState
         path.append(currentRow)
 
-
+    #Manually handles first column, since the path options are fewer
+    #Resets variables
     smallest = float('inf')
     smallestPrevState = None
+
+    #chooses either a or b
     for prev_position in [0, 1]:
         if hamming_tree[prev_position][0] < smallest:
             smallest = hamming_tree[prev_position][0]
             smallestPrevState = prev_position
+
+    #Saves the "last path" and reverses the list, since we entered from the back.
     path.append(smallestPrevState)
     path.reverse()
 
-
+    #The actual final step from a or b to a is inserted in the path, since we always start at 0 (a).
     path.insert(0, 0)
 
     #Stores the corrected sequence
     cSeq = []
 
+    #Used to determine the way that has been chosen. a->a would mean a key called "00" which would output ["00", "0"]. The first element is the corrected sequence, the other is the message decoded
     moves_sequence = {
     #eg a->a seq00 decodes 0
         "00": ["00", "0"], #aa
@@ -168,29 +177,43 @@ def corrected_sequence(hamming_tree: list, recieved_seq: list) -> list:
         "33": ["10", "1"]  #dd
     }
 
+    #Stores a list of lists that contains the corrected message and the decoded message
     corrected_DATA = []
+
+    #Starts in 1, since we compare with previous
     for steps in range(1, len(path)):
         connectionPath = str
+
+
         prevPath = str(path[steps-1])
         currenPath = str(path[steps])
         connectionPath = prevPath + currenPath
         #print(connectionPath)
+
+        #Uses the dict to find the corrected sequence and message
         corrected_DATA.append(moves_sequence[connectionPath])
 
+    #Returns the final data
     return corrected_DATA
 
 
+#Used to display the data nicely
 def nicelyDisplayed(data: list):
     #print(data)
+
+    #Strores the sequence (corrected)
     sequence_new = []
+
+    #Stores the decoded message
     decodedMessage = []
 
+    #Splits the data and displays it
     for elements in range(len(data)):
         sequence_new.append(data[elements][0])
         decodedMessage.append(data[elements][1])
 
     print("Corrected sequence")
-    print(sequence_new)
+    print(sequence_new, "\n")
 
     print("decoded message")
     print(decodedMessage)
@@ -231,11 +254,15 @@ if __name__ == "__main__":
 
 
     hammign_matrix = viterbi_trellis(input_sequence, generator111_101, ready_hamming, reduced_hamming)
-    print("All distancces (smallest one for each point)")
-    print(hammign_matrix)
+
+    print("All distancces (smallest one for each point). It is only the first two rows in the first column that is used.\nThis means the rest of the column will always stay at 0, but the code will never use them in the hamming distance")
+    print(hammign_matrix, "\n")
 
     mostLikely_sequence = corrected_sequence(hammign_matrix, input_sequence)
-    
+
+    print("Input Sequence:")
+    print(input_sequence)
+    print("\n")
     nicelyDisplayed(mostLikely_sequence)
 
 
