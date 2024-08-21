@@ -124,7 +124,7 @@ def corrected_sequence(hamming_tree: list, recieved_seq: list) -> list:
         0: [0, 2],
         1: [0, 2],
         2: [1, 3],
-        3: [1, 3],
+        3: [1, 3]
         }
 
     for columns in range(lastCol, 1, -1):
@@ -153,11 +153,48 @@ def corrected_sequence(hamming_tree: list, recieved_seq: list) -> list:
 
     path.insert(0, 0)
 
+    #Stores the corrected sequence
+    cSeq = []
 
-    return path
+    moves_sequence = {
+    #eg a->a seq00 decodes 0
+        "00": ["00", "0"], #aa
+        "01": ["11", "1"], #ab
+        "12": ["10", "0"], #bc
+        "13": ["01", "1"], #bd
+        "20": ["11", "0"], #ca
+        "21": ["00", "1"], #cb
+        "32": ["01", "0"], #dc
+        "33": ["10", "1"]  #dd
+    }
+
+    corrected_DATA = []
+    for steps in range(1, len(path)):
+        connectionPath = str
+        prevPath = str(path[steps-1])
+        currenPath = str(path[steps])
+        connectionPath = prevPath + currenPath
+        #print(connectionPath)
+        corrected_DATA.append(moves_sequence[connectionPath])
+
+    return corrected_DATA
 
 
+def nicelyDisplayed(data: list):
+    #print(data)
+    sequence_new = []
+    decodedMessage = []
 
+    for elements in range(len(data)):
+        sequence_new.append(data[elements][0])
+        decodedMessage.append(data[elements][1])
+
+    print("Corrected sequence")
+    print(sequence_new)
+
+    print("decoded message")
+    print(decodedMessage)
+    return
 
 
 
@@ -170,10 +207,10 @@ if __name__ == "__main__":
     generator111_101 = [["00", "11"], ["10", "01"], ["11", "00"], ["01", "10"]]
 
     # The above, but split into abcd
-    generator111_101_a = ["00", "11"]
-    generator111_101_b = ["10", "01"]
-    generator111_101_c = ["11", "00"]
-    generator111_101_d = ["10", "10"]
+    #generator111_101_a = ["00", "11"]
+    #generator111_101_b = ["10", "01"]
+    #generator111_101_c = ["11", "00"]
+    #generator111_101_d = ["10", "10"]
 
 
 
@@ -198,5 +235,7 @@ if __name__ == "__main__":
     print(hammign_matrix)
 
     mostLikely_sequence = corrected_sequence(hammign_matrix, input_sequence)
-    print("Corrected sequence")
-    print(mostLikely_sequence)
+    
+    nicelyDisplayed(mostLikely_sequence)
+
+
