@@ -41,8 +41,8 @@ def lowestHamming(ham1: int, ham2: int) -> int:
     else:
         return ham1
 
-# Calculates/returns the most likely sequence (corrected sequence) by using viterbi:
-def viterbi_trellis(input_seq: list, generator_poly: list, store_hamming: list, hamming_path: list) -> str:
+# Calculates hamming distance by using the viterbi. Returns a list with the distances:
+def viterbi_trellis(input_seq: list, generator_poly: list, store_hamming: list, hamming_path: list) -> list:
 
     #store_hamming[ROW][COL] = hammingDistance(generator_poly[ABCD][01], input_seq[ELEMENT], store_hamming[ROW][COL])
     # 0,1 = A
@@ -95,6 +95,15 @@ def viterbi_trellis(input_seq: list, generator_poly: list, store_hamming: list, 
 
 
 
+
+def corrected_sequence(hamming_tree: list, recieved_seq: list) -> list:
+
+    return
+
+
+
+
+
 if __name__ == "__main__":
 
     # Generator polynomial
@@ -127,3 +136,5 @@ if __name__ == "__main__":
 
     hammign_matrix = viterbi_trellis(input_sequence, generator111_101, ready_hamming, reduced_hamming)
     print(hammign_matrix)
+
+    mostLikely_sequence = corrected_sequence(hammign_matrix, input_sequence)
