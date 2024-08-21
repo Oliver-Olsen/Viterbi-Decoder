@@ -195,14 +195,25 @@ def corrected_sequence(hamming_tree: list, recieved_seq: list) -> list:
         #Cheapest hamming distance row to choose. Saves the current state in the path, but also for the next loop
         currentRow = smallestPrevState
         path.append(currentRow)
+        print(path)
+
 
 
 
 
     smallest = float('inf')
     smallestPrevState = None
-    
+    if currentRow in [4, 5]:
+        currentRow = 2
+    elif currentRow in [6, 7]:
+        currentRow = 3
+    elif currentRow in [2, 3]:
+        currentRow = 1
 
+    else:
+        currentRow = 0
+
+    path.append(currentRow)
 
 
     #Manually handles first column, since the path options are fewer
@@ -228,32 +239,49 @@ def corrected_sequence(hamming_tree: list, recieved_seq: list) -> list:
 
     #Used to determine the way that has been chosen. a->a would mean a key called "00" which would output ["00", "0"]. The first element is the corrected sequence, the other is the message decoded
     moves_sequence = {
-    #eg a->a seq00 decodes 0
-        #"00": ["00", "0"], #aa
-        #"01": ["11", "1"], #ab
-        #"12": ["10", "0"], #bc
-        #"13": ["01", "1"], #bd
-        #"20": ["11", "0"], #ca
-        #"21": ["00", "1"], #cb
-        #"32": ["01", "0"], #dc
-        #"33": ["10", "1"],  #dd
+        #"00": ["000", "0"], #aa
+        #"04": ["111", "0"], #ae
+        #"10": ["111", "1"], #ba
+        #"14": ["000", "1"], #be
+        #"21": ["011", "0"], #cb
+        #"25": ["100", "0"], #cf
+        #"31": ["100", "1"], #db
+        #"36": ["011", "1"], #df
+        #"42": ["110", "0"], #ec
+        #"46": ["001", "0"], #eg
+        #"52": ["001", "1"], #fc
+        #"56": ["110", "1"], #fg
+        #"64": ["001", "0"], #gd
+        #"67": ["010", "0"], #gh
+        #"73": ["010", "1"], #hd
+        #"77": ["101", "1"], #hh
 
-        "00": ["000", "0"], #aa
-        "04": ["111", "0"], #ae
-        "10": ["111", "1"], #ba
-        "14": ["000", "1"], #be
-        "21": ["011", "0"], #cb
-        "25": ["100", "0"], #cf
-        "31": ["100", "1"], #db
-        "35": ["011", "1"], #df
-        "42": ["110", "0"], #ec
-        "46": ["001", "0"], #eg
-        "52": ["001", "1"], #fc
-        "56": ["110", "1"], #fg
-        "63": ["101", "0"], #gd
-        "67": ["010", "0"], #gh
-        "73": ["010", "1"], #hd
-        "77": ["101", "1"], #hh
+
+
+        "00": ["000", "0"],
+        "01": ["111", "1"],
+        "12": ["011", "0"],
+        "13": ["100", "1"],
+        "24": ["110", "0"],
+        "25": ["001", "1"],
+        "36": ["101", "0"],
+        "37": ["010", "1"],
+        "40": ["111", "0"],
+        "41": ["000", "1"],
+        "52": ["100", "0"],
+        "53": ["011", "1"],
+        "64": ["001", "0"],
+        "65": ["110", "1"],
+        "76": ["010", "0"],
+        "77": ["101", "1"]
+
+
+
+
+
+
+
+
     }
 
     #Stores a list of lists that contains the corrected message and the decoded message
@@ -345,7 +373,7 @@ if __name__ == "__main__":
     print("Input Sequence:")
     print(input_sequence)
     print("\n")
-    
+
     #Displays the data
     nicelyDisplayed(mostLikely_sequence)
 
