@@ -252,17 +252,20 @@ if __name__ == "__main__":
     # DEMO row, column
     #ready_hamming[5][3] = 5
 
-
+    #Gets the hamming distances
     hammign_matrix = viterbi_trellis(input_sequence, generator111_101, ready_hamming, reduced_hamming)
 
     print("All distancces (smallest one for each point). It is only the first two rows in the first column that is used.\nThis means the rest of the column will always stay at 0, but the code will never use them in the hamming distance")
     print(hammign_matrix, "\n")
 
+    #Calculates the corrected sequence and the decoded message
     mostLikely_sequence = corrected_sequence(hammign_matrix, input_sequence)
 
     print("Input Sequence:")
     print(input_sequence)
     print("\n")
+    
+    #Displays the data
     nicelyDisplayed(mostLikely_sequence)
 
 
