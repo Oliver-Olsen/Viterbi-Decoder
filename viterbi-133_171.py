@@ -24,11 +24,18 @@ def trellis_construct(matrix_size: int, generator_states: list) -> list:
 # Takes the generator state and calculates the hamming distance for the initial sequence "move"
 def hammingDistance(generator_states: str, seq: str, previousDist: int) -> int:
 
+    #print("start ham", previousDist)
     if generator_states[0] != seq[0]:
         previousDist = previousDist + 1
 
     if generator_states[1] != seq[1]:
         previousDist = previousDist + 1
+
+    if generator_states[2] != seq[2]:
+        previousDist = previousDist +1
+    #print("genState", generator_states)
+    #print("seq", seq)
+    #print("end ham", previousDist)
     #print("hamming done")
     return previousDist
 
@@ -45,58 +52,98 @@ def lowestHamming(ham1: int, ham2: int) -> int:
 def viterbi_trellis(input_seq: list, generator_poly: list, store_hamming: list, hamming_path: list) -> list:
 
     #store_hamming[ROW][COL] = hammingDistance(generator_poly[ABCD][01], input_seq[ELEMENT], store_hamming[ROW][COL])
-    # 0,1 = A
-    # 2,3 = B
-    # 4,5 = C
-    # 6,7 = D
+
 
     # Used to make easier navigate
     a = 0
     b = 1
     c = 2
     d = 3
-
+    e = 4
+    f = 5
+    g = 6
+    h = 7
+    #print(generator_poly)
     # First step
-    hamming_path[a][0] = hammingDistance(generator_poly[a][0], input_seq[0], 0)                    # a0 -> a1
-
-    hamming_path[b][0] = hammingDistance(generator_poly[a][1], input_seq[0], 0)                    # a0 -> b1
-
+    #print(generator_poly[a][1], input_seq[0])
+    hamming_path[a][0] = hammingDistance(generator_poly[a][0], input_seq[0], 0)                   # a0 -> a1
+    hamming_path[b][0] = hammingDistance(generator_poly[a][1], input_seq[0], 0)                   # a0 -> b1
+    #print("HAMdIST")
+    #print(hamming_path[b][0])
+    #print(generator_poly[a][0])
     # Second step
     hamming_path[a][1] = hammingDistance(generator_poly[a][0], input_seq[1], hamming_path[a][0])  # a1 -> a2
     hamming_path[b][1] = hammingDistance(generator_poly[a][1], input_seq[1], hamming_path[a][0])  # a1 -> b2
     hamming_path[c][1] = hammingDistance(generator_poly[b][0], input_seq[1], hamming_path[b][0])  # b1 -> c2
     hamming_path[d][1] = hammingDistance(generator_poly[b][1], input_seq[1], hamming_path[b][0])  # b1 -> d2
 
+    # Third step
+
+    hamming_path[a][2] = hammingDistance(generator_poly[a][0], input_seq[2], hamming_path[a][1])  # a2 -> a3
+    hamming_path[b][2] = hammingDistance(generator_poly[a][1], input_seq[2], hamming_path[a][1])  # a2 -> b3
+    hamming_path[c][2] = hammingDistance(generator_poly[b][0], input_seq[2], hamming_path[b][1])  # b2 -> c3
+    hamming_path[d][2] = hammingDistance(generator_poly[b][1], input_seq[2], hamming_path[b][1])  # b2 -> d3
+    hamming_path[e][2] = hammingDistance(generator_poly[c][0], input_seq[2], hamming_path[c][1])  # c2 -> e3
+    hamming_path[f][2] = hammingDistance(generator_poly[c][1], input_seq[2], hamming_path[c][1])  # c2 -> f3
+    hamming_path[g][2] = hammingDistance(generator_poly[d][0], input_seq[2], hamming_path[d][1])  # d2 -> g3
+    hamming_path[h][2] = hammingDistance(generator_poly[d][1], input_seq[2], hamming_path[d][1])  # d2 -> h3
+
+
+
+    #print(hamming_path)
+
+
+
+
     # loops for the remainder of columns/sequences left. The first two unique steps have been completed, therefore loop starts at 2.
-    for elements in range(2, len(input_seq)):
+    for elements in range(3, len(input_seq)):
 
-        #Path to a from a and c. Lowest hamming distance is saved
+        #Path to a from a and e. Lowest hamming distance is saved
         hamming_path[a][elements] = lowestHamming(hammingDistance(generator_poly[a][0], input_seq[elements], hamming_path[a][elements-1]),
-                                                hammingDistance(generator_poly[c][0], input_seq[elements], hamming_path[c][elements-1]))
+                                                hammingDistance(generator_poly[e][0], input_seq[elements], hamming_path[e][elements-1]))
 
-        #Path to b from a and c
+        #Path to b from a and e
         hamming_path[b][elements] = lowestHamming(hammingDistance(generator_poly[a][1], input_seq[elements], hamming_path[a][elements-1]),
-                                                hammingDistance(generator_poly[c][1], input_seq[elements], hamming_path[c][elements-1]))
+                                                hammingDistance(generator_poly[e][1], input_seq[elements], hamming_path[e][elements-1]))
 
-        #Path to c from b and d
+        #Path to c from b and f
         hamming_path[c][elements] = lowestHamming(hammingDistance(generator_poly[b][0], input_seq[elements], hamming_path[b][elements-1]),
-                                                hammingDistance(generator_poly[d][0], input_seq[elements], hamming_path[d][elements-1]))
+                                                hammingDistance(generator_poly[f][0], input_seq[elements], hamming_path[f][elements-1]))
 
-        #Path to d from b and d
+        #Path to d from b and f
         hamming_path[d][elements] = lowestHamming(hammingDistance(generator_poly[b][1], input_seq[elements], hamming_path[b][elements-1]),
-                                                hammingDistance(generator_poly[d][1], input_seq[elements], hamming_path[d][elements-1]))
+                                                hammingDistance(generator_poly[f][1], input_seq[elements], hamming_path[f][elements-1]))
+
+        #Path to e from c and g
+        hamming_path[e][elements] = lowestHamming(hammingDistance(generator_poly[c][0], input_seq[elements], hamming_path[c][elements-1]),
+                                                hammingDistance(generator_poly[g][0], input_seq[elements], hamming_path[g][elements-1]))
+
+        #Path to f from c and g
+        hamming_path[f][elements] = lowestHamming(hammingDistance(generator_poly[c][1], input_seq[elements], hamming_path[c][elements-1]),
+                                                hammingDistance(generator_poly[g][1], input_seq[elements], hamming_path[g][elements-1]))
+
+        #Path to g from d and h
+        hamming_path[g][elements] = lowestHamming(hammingDistance(generator_poly[d][0], input_seq[elements], hamming_path[d][elements-1]),
+                                                hammingDistance(generator_poly[h][0], input_seq[elements], hamming_path[h][elements-1]))
+
+        #Path to h from d and h
+        hamming_path[h][elements] = lowestHamming(hammingDistance(generator_poly[d][1], input_seq[elements], hamming_path[d][elements-1]),
+                                                hammingDistance(generator_poly[h][1], input_seq[elements], hamming_path[h][elements-1]))
+
 
         #print(input_seq[elements])
         #store_hamming[0][elements] = hammingDistance(generator_poly[0][0], input_seq[elements], store_hamming[0][elements-1])   #a->a
         #store_hamming[1][elements] = hammingDistance(generator_poly[2][0], input_seq[elements], store_hamming[][elements-1])
         #store_hamming[2][elements] = hammingDistance(generator_poly[0][1], input_seq[elements], store_hamming[0][elements-1])   #a->b
-
+    #print(hamming_path)
     return hamming_path
 
 
 
 
 def corrected_sequence(hamming_tree: list, recieved_seq: list) -> list:
+
+
 
     #Stores the final row path, from right to left
     path = []
@@ -110,7 +157,7 @@ def corrected_sequence(hamming_tree: list, recieved_seq: list) -> list:
 
 
     #Finds the smallest hamming distance at the back of the hamming distance tree
-    for row in range(4):
+    for row in range(8):
         #print(firstCol)
         if hamming_tree[row][lastCol] < smallest:
             smallest = hamming_tree[row][lastCol]
@@ -119,16 +166,22 @@ def corrected_sequence(hamming_tree: list, recieved_seq: list) -> list:
     #The smallest hamming values, row is chosen
     path.append(currentRow)
 
-    #Movement rules. a = 0, b = 1, c = 2, d = 3. Controlls which points can be accessed from current row
+
+    #Movement rules. a = 0, b = 1, c = 2, d = 3, e = 4, f = 5, g = 6, h = 7. Controlls which points can be accessed from current row
     rules_move = {
-        0: [0, 2],
-        1: [0, 2],
-        2: [1, 3],
-        3: [1, 3]
+        0: [0, 4],
+        1: [0, 4],
+        2: [1, 5],
+        3: [1, 5],
+        4: [2, 6],
+        5: [2, 6],
+        6: [3, 7],
+        7: [3, 7]
         }
 
-    #Goes through the tree for each column, but stops at the first column
-    for columns in range(lastCol, 1, -1):
+    #Goes through the tree for each column, but stops at the second column
+    for columns in range(lastCol, 2, -1):
+        print(columns)
         previousPos = rules_move[currentRow]
         smallest = float('inf')
         smallestPrevState = None
@@ -142,6 +195,15 @@ def corrected_sequence(hamming_tree: list, recieved_seq: list) -> list:
         #Cheapest hamming distance row to choose. Saves the current state in the path, but also for the next loop
         currentRow = smallestPrevState
         path.append(currentRow)
+
+
+
+
+    smallest = float('inf')
+    smallestPrevState = None
+    
+
+
 
     #Manually handles first column, since the path options are fewer
     #Resets variables
@@ -167,20 +229,38 @@ def corrected_sequence(hamming_tree: list, recieved_seq: list) -> list:
     #Used to determine the way that has been chosen. a->a would mean a key called "00" which would output ["00", "0"]. The first element is the corrected sequence, the other is the message decoded
     moves_sequence = {
     #eg a->a seq00 decodes 0
-        "00": ["00", "0"], #aa
-        "01": ["11", "1"], #ab
-        "12": ["10", "0"], #bc
-        "13": ["01", "1"], #bd
-        "20": ["11", "0"], #ca
-        "21": ["00", "1"], #cb
-        "32": ["01", "0"], #dc
-        "33": ["10", "1"]  #dd
+        #"00": ["00", "0"], #aa
+        #"01": ["11", "1"], #ab
+        #"12": ["10", "0"], #bc
+        #"13": ["01", "1"], #bd
+        #"20": ["11", "0"], #ca
+        #"21": ["00", "1"], #cb
+        #"32": ["01", "0"], #dc
+        #"33": ["10", "1"],  #dd
+
+        "00": ["000", "0"], #aa
+        "04": ["111", "0"], #ae
+        "10": ["111", "1"], #ba
+        "14": ["000", "1"], #be
+        "21": ["011", "0"], #cb
+        "25": ["100", "0"], #cf
+        "31": ["100", "1"], #db
+        "35": ["011", "1"], #df
+        "42": ["110", "0"], #ec
+        "46": ["001", "0"], #eg
+        "52": ["001", "1"], #fc
+        "56": ["110", "1"], #fg
+        "63": ["101", "0"], #gd
+        "67": ["010", "0"], #gh
+        "73": ["010", "1"], #hd
+        "77": ["101", "1"], #hh
     }
 
     #Stores a list of lists that contains the corrected message and the decoded message
     corrected_DATA = []
 
     #Starts in 1, since we compare with previous
+    print(path)
     for steps in range(1, len(path)):
         connectionPath = str
 
@@ -189,7 +269,7 @@ def corrected_sequence(hamming_tree: list, recieved_seq: list) -> list:
         currenPath = str(path[steps])
         connectionPath = prevPath + currenPath
         #print(connectionPath)
-
+        #print(connectionPath)
         #Uses the dict to find the corrected sequence and message
         corrected_DATA.append(moves_sequence[connectionPath])
 
@@ -226,8 +306,8 @@ def nicelyDisplayed(data: list):
 if __name__ == "__main__":
 
     # Generator polynomial
-    #                        A             B             C             D
-    generator111_101 = [["00", "11"], ["10", "01"], ["11", "00"], ["01", "10"]]
+    #                         A               B               C               D               E               F               G               H
+    generator133_171 = [["000", "111"], ["011", "100"], ["110", "001"], ["101", "010"], ["111", "000"], ["100", "011"], ["001", "110"], ["010", "101"]]
 
     # The above, but split into abcd
     #generator111_101_a = ["00", "11"]
@@ -239,7 +319,7 @@ if __name__ == "__main__":
 
 
     # Sequence to be decoded. Entered as a list of strings
-    input_sequence = ["11", "01", "01", "10", "01"]
+    input_sequence = ["000", "101", "000", "101", "000", "101", "000"]
     #input_sequence = ["01", "00", "01", "00", "00"]
 
 
@@ -247,13 +327,14 @@ if __name__ == "__main__":
     length_of_sequence = sequence(input_sequence)
 
     # Create matrix. Uses the length of the sequence to determine size
-    ready_hamming, reduced_hamming = (trellis_construct(length_of_sequence, generator111_101))
+    ready_hamming, reduced_hamming = (trellis_construct(length_of_sequence, generator133_171))
 
+    #print(reduced_hamming)
     # DEMO row, column
     #ready_hamming[5][3] = 5
 
     #Gets the hamming distances
-    hammign_matrix = viterbi_trellis(input_sequence, generator111_101, ready_hamming, reduced_hamming)
+    hammign_matrix = viterbi_trellis(input_sequence, generator133_171, ready_hamming, reduced_hamming)
 
     print("All distancces (smallest one for each point). It is only the first two rows in the first column that is used.\nThis means the rest of the column will always stay at 0, but the code will never use them in the hamming distance")
     print(hammign_matrix, "\n")
@@ -267,5 +348,8 @@ if __name__ == "__main__":
     
     #Displays the data
     nicelyDisplayed(mostLikely_sequence)
+
+    print("Expected sequence")
+    print("000, 111, 100, 101, 001, 111, 000")
 
 
