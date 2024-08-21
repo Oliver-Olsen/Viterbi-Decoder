@@ -4,7 +4,7 @@
 #Kommentarer skrives på engelsk
 import numpy as np
 
-print("WORKS")
+#print("WORKS")
 
 #Returns length of sequence (used for trellis diagram)
 def sequence(seq: list) -> int:
@@ -67,7 +67,7 @@ def viterbi_trellis(input_seq: list, generator_poly: list, store_hamming: list, 
     hamming_path[c][1] = hammingDistance(generator_poly[b][0], input_seq[1], hamming_path[b][0])  # b1 -> c2
     hamming_path[d][1] = hammingDistance(generator_poly[b][1], input_seq[1], hamming_path[b][0])  # b1 -> d2
 
-    # loops for the remainder of columns/sequences left. The first two unique steps have been completed.
+    # loops for the remainder of columns/sequences left. The first two unique steps have been completed, therefore loop starts at 2.
     for elements in range(2, len(input_seq)):
 
         #Path to a from a and c. Lowest hamming distance is saved
@@ -98,7 +98,66 @@ def viterbi_trellis(input_seq: list, generator_poly: list, store_hamming: list, 
 
 def corrected_sequence(hamming_tree: list, recieved_seq: list) -> list:
 
-    return
+    #Stores the final row path, from right to left
+    path = []
+
+    #Used to store the cheapest path
+    smallest = float('inf')
+
+    # Minus 1 to be used as an index
+    lastCol = len(recieved_seq) - 1
+
+
+
+    #Finds the smallest hamming distance at the back of the hamming distance tree
+    for row in range(4):
+        #print(firstCol)
+        if hamming_tree[row][lastCol] < smallest:
+            smallest = hamming_tree[row][lastCol]
+            currentRow = row
+
+    #The smallest hamming values, row is chosen
+    path.append(currentRow)
+
+    #Movement rules. a = 0, b = 1, c = 2, d = 3. Controlls which points can be accessed from current row
+    rules_move = {
+        0: [0, 2],
+        1: [0, 2],
+        2: [1, 3],
+        3: [1, 3],
+        }
+
+    for columns in range(lastCol, 1, -1):
+        previousPos = rules_move[currentRow]
+        smallest = float('inf')
+        smallestPrevState = None
+
+        for prev_position in previousPos:
+            if hamming_tree[prev_position][columns - 1] < smallest:
+                smallest = hamming_tree[prev_position][columns - 1]
+                smallestPrevState = prev_position
+
+        currentRow = smallestPrevState
+        path.append(currentRow)
+
+
+    smallest = float('inf')
+    smallestPrevState = None
+    for prev_position in [0, 1]:
+        if hamming_tree[prev_position][0] < smallest:
+            smallest = hamming_tree[prev_position][0]
+            smallestPrevState = prev_position
+    path.append(smallestPrevState)
+    path.reverse()
+
+
+    path.insert(0, 0)
+
+
+    return path
+
+
+
 
 
 
@@ -120,8 +179,8 @@ if __name__ == "__main__":
 
 
     # Sequence to be decoded. Entered as a list of strings
-    #input_sequence = ["11", "01", "01", "10", "01"]
-    input_sequence = ["01", "00", "01", "00", "00"]
+    input_sequence = ["11", "01", "01", "10", "01"]
+    #input_sequence = ["01", "00", "01", "00", "00"]
 
 
     # Get length of sequence
@@ -135,6 +194,9 @@ if __name__ == "__main__":
 
 
     hammign_matrix = viterbi_trellis(input_sequence, generator111_101, ready_hamming, reduced_hamming)
+    print("All distancces (smallest one for each point)")
     print(hammign_matrix)
 
     mostLikely_sequence = corrected_sequence(hammign_matrix, input_sequence)
+    print("Corrected sequence")
+    print(mostLikely_sequence)
