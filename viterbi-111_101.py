@@ -264,8 +264,6 @@ if __name__ == "__main__":
     print("Input Sequence:")
     print(input_sequence)
     print("\n")
-    
+
     #Displays the data
     nicelyDisplayed(mostLikely_sequence)
-
-
