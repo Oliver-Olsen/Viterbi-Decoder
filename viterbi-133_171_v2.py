@@ -29,8 +29,6 @@ def hammingDistance(generator_states: str, seq: str, previousDist: int) -> int:
     if generator_states[1] != seq[1]:
         previousDist = previousDist + 1
 
-    if generator_states[2] != seq[2]:
-        previousDist = previousDist +1
 
     return previousDist
 

@@ -34,8 +34,6 @@ def hammingDistance(generator_states: str, seq: str, previousDist: int) -> int:
 
 def lowestHamming(ham1: int, ham2: int) -> int:
     # Hard decision. chooses the upper path at a tie.
-    #print(ham1, "ham1")
-    #print(ham2, "ham2")
     if ham1 > ham2:
         return ham2
     else:
@@ -44,13 +42,7 @@ def lowestHamming(ham1: int, ham2: int) -> int:
 # Calculates hamming distance by using the viterbi. Returns a list with the distances:
 def viterbi_trellis(input_seq: list, generator_poly: list, store_hamming: list, hamming_path: list) -> list:
 
-    #store_hamming[ROW][COL] = hammingDistance(generator_poly[ABCD][01], input_seq[ELEMENT], store_hamming[ROW][COL])
-    # 0,1 = A
-    # 2,3 = B
-    # 4,5 = C
-    # 6,7 = D
-
-    # Used to make easier navigate
+    # Used to make easier navigation
     a = 0
     b = 1
     c = 2
@@ -85,11 +77,6 @@ def viterbi_trellis(input_seq: list, generator_poly: list, store_hamming: list, 
         #Path to d from b and d
         hamming_path[d][elements] = lowestHamming(hammingDistance(generator_poly[b][1], input_seq[elements], hamming_path[b][elements-1]),
                                                 hammingDistance(generator_poly[d][1], input_seq[elements], hamming_path[d][elements-1]))
-
-        #print(input_seq[elements])
-        #store_hamming[0][elements] = hammingDistance(generator_poly[0][0], input_seq[elements], store_hamming[0][elements-1])   #a->a
-        #store_hamming[1][elements] = hammingDistance(generator_poly[2][0], input_seq[elements], store_hamming[][elements-1])
-        #store_hamming[2][elements] = hammingDistance(generator_poly[0][1], input_seq[elements], store_hamming[0][elements-1])   #a->b
 
     return hamming_path
 
@@ -161,9 +148,6 @@ def corrected_sequence(hamming_tree: list, recieved_seq: list) -> list:
     #The actual final step from a or b to a is inserted in the path, since we always start at 0 (a).
     path.insert(0, 0)
 
-    #Stores the corrected sequence
-    cSeq = []
-
     #Used to determine the way that has been chosen. a->a would mean a key called "00" which would output ["00", "0"]. The first element is the corrected sequence, the other is the message decoded
     moves_sequence = {
     #eg a->a seq00 decodes 0
@@ -199,7 +183,6 @@ def corrected_sequence(hamming_tree: list, recieved_seq: list) -> list:
 
 #Used to display the data nicely
 def nicelyDisplayed(data: list):
-    #print(data)
 
     #Strores the sequence (corrected)
     sequence_new = []
@@ -228,14 +211,6 @@ if __name__ == "__main__":
     # Generator polynomial
     #                        A             B             C             D
     generator111_101 = [["00", "11"], ["10", "01"], ["11", "00"], ["01", "10"]]
-
-    # The above, but split into abcd
-    #generator111_101_a = ["00", "11"]
-    #generator111_101_b = ["10", "01"]
-    #generator111_101_c = ["11", "00"]
-    #generator111_101_d = ["10", "10"]
-
-
 
 
     # Sequence to be decoded. Entered as a list of strings
