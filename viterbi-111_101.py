@@ -4,8 +4,6 @@
 #Kommentarer skrives på engelsk
 import numpy as np
 
-#print("WORKS")
-
 #Returns length of sequence (used for trellis diagram)
 def sequence(seq: list) -> int:
     seq_elements = len(seq)
