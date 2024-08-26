@@ -5,6 +5,9 @@
 import numpy as np
 
 
+#NOT DONE. NEEDS TO BE EXPANDED, SO IT SUPPORTS 133, 171.
+#CURRENT STATE: Copy of  1011, 1111, 1101
+
 #Returns length of sequence (used for trellis diagram)
 def sequence(seq: list) -> int:
     seq_elements = len(seq)
